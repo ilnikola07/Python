@@ -43,25 +43,6 @@ class InstanceCounter:
             "by_class": dict(cls._class_stats)  
         }
 
-    # @classmethod
-    # def save_to_json(cls, filepath=None):
-    #     filepath = filepath or cls._filepath
-    #     data = cls.get_stats()
-    #     with open(filepath, "w", encoding="utf-8") as f:
-    #         json.dump(data, f, ensure_ascii=False, indent=2)
-
-    # @classmethod
-    # def load_from_json(cls, filepath=None):
-    #     filepath = filepath or cls._filepath
-    #     if not os.path.exists(filepath):
-    #         return
-    #     with open(filepath, "r", encoding="utf-8") as f:
-    #         data = json.load(f)
-    #     cls._total_created = data.get("total_created", 0)
-    #     cls._alive = data.get("alive", 0)
-    #     cls._total_deleted = data.get("total_deleted", 0)
-    #     cls._class_stats = data.get("by_class", {})  
-
     @classmethod
     def reset(cls):
         cls._total_created = 0

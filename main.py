@@ -130,8 +130,6 @@ def main():
     player_base = Base(" ")
     base_pos = Position(1, 1)
     field.add_entity(player_base, base_pos) # размещает баз на поле
-
-    #InstanceCounter.load_from_json()
     
     print("Консольная стратегия \n")
     

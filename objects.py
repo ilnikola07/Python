@@ -1,18 +1,20 @@
-# objects.py
 from models import NeutralObjectInterface
+from stats import InstanceCounter
 
 class HealthPotion(NeutralObjectInterface):
     def __init__(self):
+        InstanceCounter.__init__(self)
         super().__init__("Аптечка", "+", "\033[31m")
     
     def __add__(self, unit):
         heal = 20
-        unit.hp = min(unit.hp + heal, unit.max_hp)
+        unit.hp = min(unit.hp + heal, unit.max_hp) # увеличивает здоровье, но не больше возможного
         print(f"\033[31m{unit.name} использовал аптечку. HP +{heal}\033[0m")
         return unit
 
 class GoldCoin(NeutralObjectInterface):
     def __init__(self):
+        InstanceCounter.__init__(self)
         super().__init__("Золото", "$", "\033[33m")
     
     def __add__(self, unit):
@@ -26,20 +28,23 @@ class GoldCoin(NeutralObjectInterface):
 
 class Trap(NeutralObjectInterface):
     def __init__(self):
+        InstanceCounter.__init__(self)
         super().__init__("Ловушка", "x", "\033[35m")
+    
     def __add__(self, unit):
-        # Ловушка наносит 30 урона. 
-        # Воин (50hp) выживет после 1-й, умрет после 2-й.
-        # Стрелок (30hp) умрет сразу.
         dmg = 30
         is_dead = unit.take_damage(dmg)
         print(f"\033[35m{unit.name} наступил в ловушку! -{dmg} HP\033[0m")
         if is_dead:
             print(f"\033[31m{unit.name} погиб от ловушки!\033[0m")
+            # Передаём field и base, если они доступны
+            # Если нет — придётся менять сигнатуру __add__ или передавать через unit
+            unit.die()  
         return unit
 
 class Tree(NeutralObjectInterface):
     def __init__(self):
+        InstanceCounter.__init__(self)
         super().__init__("Дерево", "T", "\033[32m")
     def __add__(self, unit):
         print(f"\033[32m{unit.name} прошел мимо дерева.\033[0m")

@@ -11,7 +11,7 @@ class InstanceCounter:
     _total_deleted = 0
     
     # счётчики по конкретным классам
-    _class_stats = {}  # {имя_класса: {"created": N, "alive": N, "deleted": N}}
+    _class_stats = {}  
     
     _filepath = "instances.json"
 

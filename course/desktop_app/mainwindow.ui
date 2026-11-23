@@ -1,0 +1,619 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1182</width>
+    <height>700</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>1182</width>
+    <height>700</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>1182</width>
+    <height>700</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QTabBar::tab {
+    background: #e0e0e0;
+    color: #333333;
+    min-width: 190px;
+    min-height: 45px;
+    font-size: 15px;
+    font-weight: bold;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    margin-right: 4px;
+}
+
+QTabBar::tab:selected {
+    background: #2b5b84;
+    color: white;
+}
+</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <property name="styleSheet">
+    <string notr="true">QTabWidget::pane {
+    border: 2px solid #2b5b84;
+    border-radius: 0px;
+    background-color: #2b5b84;
+    margin-top: 0px;
+}
+
+QTabWidget QStackedWidget &gt; QWidget {
+    background-color: #2b5b84;
+}
+
+QTabBar::tab {
+    background: #e0e0e0;
+    color: #333333;
+    width: 138px;
+    height: 48px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    margin-right: 4px;
+}
+
+QTabBar::tab:last {
+    margin-right: 0px;
+}
+
+QTabBar::tab:selected {
+    background-color: #2b5b84;
+    color: white;
+}
+
+QTabBar::tab:hover:!selected {
+    background-color: #d0d8e0;
+}
+
+QLabel {
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+QPushButton {
+    background-color: #e0e0e0;
+    color: #333333;
+    min-height: 45px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    padding: 0px 14px;
+}
+
+QPushButton:hover {
+    background-color: #d0d8e0;
+}
+
+QTableWidget {
+    background-color: white;
+    color: #222222;
+    border-radius: 6px;
+    gridline-color: #dcdcdc;
+    font-size: 13px;
+}
+
+QHeaderView::section {
+    background-color: #eef3f8;
+    color: #2b5b84;
+    font-weight: bold;
+    padding: 5px;
+    border: 1px solid #d0d7de;
+}
+</string>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+    <item>
+     <widget class="QTabWidget" name="table_widget">
+      <property name="styleSheet">
+       <string notr="true">QWidget#data {
+    background-color: #2b5b84;
+}
+
+QLabel {
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 4px 0px;
+}
+
+QPushButton {
+    background-color: #e0e0e0;
+    color: #333333;
+    min-height: 45px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    padding: 0px 14px;
+}
+
+QPushButton:hover {
+    background-color: #d0d8e0;
+}
+
+QPushButton:pressed {
+    background-color: #2b5b84;
+    color: white;
+    border: 2px solid #e0e0e0;
+}
+
+QTableWidget {
+    background-color: white;
+    color: #222222;
+    border-radius: 6px;
+    gridline-color: #dcdcdc;
+    font-size: 13px;
+}
+
+QHeaderView::section {
+    background-color: #eef3f8;
+    color: #2b5b84;
+    font-weight: bold;
+    padding: 5px;
+    border: 1px solid #d0d7de;
+}
+</string>
+      </property>
+      <property name="currentIndex">
+       <number>5</number>
+      </property>
+      <widget class="QWidget" name="data">
+       <attribute name="title">
+        <string>Данные</string>
+       </attribute>
+       <widget class="QLabel" name="lbl_data_status">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>80</y>
+          <width>251</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>-1</pointsize>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Строка статуса</string>
+        </property>
+       </widget>
+       <widget class="QTableWidget" name="table_data">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>130</y>
+          <width>1131</width>
+          <height>431</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QWidget" name="">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>10</y>
+          <width>1131</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QPushButton" name="btn_load_csv">
+           <property name="text">
+            <string>Загрузить CSV</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btn_preprocess">
+           <property name="text">
+            <string>Предобработать</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btn_batch_predict">
+           <property name="text">
+            <string>Прогноз для всех</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btn_export_csv">
+           <property name="text">
+            <string>Сохранить в CSV</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="OLAP">
+       <attribute name="title">
+        <string>OLAP</string>
+       </attribute>
+       <widget class="QTableWidget" name="table_olap">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>260</y>
+          <width>256</width>
+          <height>192</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLabel" name="lbl_olap_summary">
+        <property name="geometry">
+         <rect>
+          <x>400</x>
+          <y>260</y>
+          <width>63</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+       <widget class="QWidget" name="">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>10</y>
+          <width>721</width>
+          <height>215</height>
+         </rect>
+        </property>
+        <layout class="QGridLayout" name="gridLayout">
+         <item row="0" column="0">
+          <widget class="QComboBox" name="combo_olap_rows"/>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Строки куба</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2">
+          <widget class="QComboBox" name="combo_olap_filter_gender"/>
+         </item>
+         <item row="1" column="0">
+          <widget class="QComboBox" name="combo_olap_cols"/>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>Столбцы куба</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2">
+          <widget class="QPushButton" name="btn_olap_build">
+           <property name="text">
+            <string>Построить куб</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0" rowspan="2">
+          <widget class="QComboBox" name="combo_olap_measure"/>
+         </item>
+         <item row="2" column="1">
+          <widget class="QLabel" name="label_3">
+           <property name="text">
+            <string>Мера</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="2" rowspan="2">
+          <widget class="QPushButton" name="btn_olap_random">
+           <property name="text">
+            <string>Случайный срез</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QComboBox" name="combo_olap_agg"/>
+         </item>
+         <item row="4" column="1">
+          <widget class="QLabel" name="label_4">
+           <property name="text">
+            <string>Агрегация</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="predicts">
+       <attribute name="title">
+        <string>Предсказания</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_2">
+        <item row="2" column="0">
+         <widget class="QLabel" name="lbl_model_metrics_4">
+          <property name="text">
+           <string>Возраст</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <widget class="QDoubleSpinBox" name="spin_time"/>
+        </item>
+        <item row="2" column="5">
+         <widget class="QSpinBox" name="spin_month"/>
+        </item>
+        <item row="1" column="5">
+         <widget class="QComboBox" name="combo_gender"/>
+        </item>
+        <item row="4" column="5">
+         <widget class="QSpinBox" name="spin_hour"/>
+        </item>
+        <item row="0" column="1" colspan="2">
+         <widget class="QComboBox" name="combo_model"/>
+        </item>
+        <item row="3" column="3" colspan="2">
+         <widget class="QLabel" name="lbl_model_metrics_8">
+          <property name="text">
+           <string>День недели</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="lbl_predict_result_2">
+          <property name="text">
+           <string>Модель</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="3" colspan="3">
+         <widget class="QLabel" name="lbl_model_metrics_3">
+          <property name="text">
+           <string>Accuracy: - | F1: -</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0" colspan="2">
+         <widget class="QLabel" name="lbl_model_metrics_5">
+          <property name="text">
+           <string>Доход региона</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="0" colspan="3">
+         <widget class="QLabel" name="lbl_predict_result">
+          <property name="text">
+           <string>Результат появится здесь</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="2">
+         <widget class="QSpinBox" name="spin_age"/>
+        </item>
+        <item row="1" column="3" colspan="2">
+         <widget class="QLabel" name="lbl_model_metrics">
+          <property name="text">
+           <string>Пол</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="2">
+         <widget class="QDoubleSpinBox" name="spin_internet"/>
+        </item>
+        <item row="1" column="0" colspan="2">
+         <widget class="QLabel" name="lbl_model_metrics_2">
+          <property name="text">
+           <string>Время на сайте</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="2">
+         <widget class="QDoubleSpinBox" name="spin_income"/>
+        </item>
+        <item row="2" column="3" colspan="2">
+         <widget class="QLabel" name="lbl_model_metrics_7">
+          <property name="text">
+           <string>Месяц</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="0" colspan="2">
+         <widget class="QLabel" name="lbl_model_metrics_6">
+          <property name="text">
+           <string>Трафик в день</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="5">
+         <widget class="QSpinBox" name="spin_dow"/>
+        </item>
+        <item row="4" column="3" colspan="2">
+         <widget class="QLabel" name="lbl_model_metrics_9">
+          <property name="text">
+           <string>Час</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="0" colspan="6">
+         <widget class="QPushButton" name="btn_predict">
+          <property name="text">
+           <string>Рассчитать вероятность клика</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="visual">
+       <attribute name="title">
+        <string>Результаты</string>
+       </attribute>
+       <widget class="QTableWidget" name="widget_plot">
+        <property name="geometry">
+         <rect>
+          <x>495</x>
+          <y>141</y>
+          <width>641</width>
+          <height>411</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QWidget" name="widget_plot_2" native="true">
+        <property name="geometry">
+         <rect>
+          <x>19</x>
+          <y>30</y>
+          <width>451</width>
+          <height>521</height>
+         </rect>
+        </property>
+        <widget class="QTableWidget" name="table_metrics_2">
+         <property name="geometry">
+          <rect>
+           <x>40</x>
+           <y>0</y>
+           <width>421</width>
+           <height>521</height>
+          </rect>
+         </property>
+        </widget>
+       </widget>
+       <widget class="QWidget" name="">
+        <property name="geometry">
+         <rect>
+          <x>490</x>
+          <y>30</y>
+          <width>641</width>
+          <height>81</height>
+         </rect>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QComboBox" name="combo_plot_type"/>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btn_draw_plot">
+           <property name="text">
+            <string>Обновить результаты</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="history">
+       <attribute name="title">
+        <string>История</string>
+       </attribute>
+       <widget class="QTableWidget" name="table_history">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>81</y>
+          <width>1111</width>
+          <height>471</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QWidget" name="">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>10</y>
+          <width>1121</width>
+          <height>50</height>
+         </rect>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QComboBox" name="combo_history_source"/>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btn_clear_history">
+           <property name="text">
+            <string>Очистить историю</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btn_refresh_history">
+           <property name="text">
+            <string>Обновить из БД</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="about">
+       <attribute name="title">
+        <string>Справка</string>
+       </attribute>
+       <widget class="QLabel" name="lbl_about_text">
+        <property name="geometry">
+         <rect>
+          <x>60</x>
+          <y>20</y>
+          <width>1021</width>
+          <height>501</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QTextBrowser {
+    background-color: white;
+    color: #222222;
+    font-size: 15px;
+    border-radius: 8px;
+    padding: 15px;
+}
+</string>
+        </property>
+        <property name="text">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Система анализа и прогнозирования отклика пользователей на интернет-рекламу&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Назначение приложения:&lt;/p&gt;&lt;p&gt;Программный комплекс предназначен для многомерного анализа поведения аудитории (OLAP) и прогнозирования вероятности клика по рекламному баннеру (Clicked on Ad) методами машинного обучения.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Руководство по работе с вкладками:&lt;/p&gt;&lt;p&gt;1. Данные — загрузка исходного датасета (advertising.csv), автоматическая очистка и генерация временных признаков (месяц, день недели, час, возрастная группа), пакетное прогнозирование и экспорт результатов в CSV.&lt;/p&gt;&lt;p&gt;2. OLAP — интерактивный конструктор многомерного куба. Позволяет формировать произвольные срезы данных по выбранным измерениям (строки и столбцы), мерам и функциям агрегации, а также генерировать случайные срезы.&lt;/p&gt;&lt;p&gt;3. Предсказания — оценка вероятности клика для конкретного пользователя по 8 параметрам с возможностью выбора обученной ML-модели или собственного алгоритма.&lt;/p&gt;&lt;p&gt;4. Результаты — сводная таблица метрик качества моделей (Accuracy, Precision, Recall, F1-score) и визуализация графиков (сравнение моделей, матрицы ошибок, тепловая карта OLAP-куба).&lt;/p&gt;&lt;p&gt;5. История — журнал всех выполненных прогнозов из общей базы данных SQLite3 (синхронизируется с Telegram-ботом).&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Архитектура и стек технологий:&lt;/p&gt;&lt;p&gt;Приложение построено по многослойной архитектуре (Layered Architecture) с разделением слоя представления (PySide6 / aiogram 3), сервисного слоя, ML-ядра и слоя хранения данных.&lt;/p&gt;&lt;p&gt;• Язык и GUI: Python 3, PySide6 (Qt Designer)&lt;/p&gt;&lt;p&gt;• Анализ данных и ML: pandas, NumPy, scikit-learn, joblib, Matplotlib&lt;/p&gt;&lt;p&gt;• База данных и интеграция: SQLite3, Telegram Bot API (aiogram 3)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1182</width>
+     <height>26</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

@@ -78,6 +78,17 @@ class MainWindow(QMainWindow):
         self.ui.combo_olap_agg.addItems(list(AGGS.keys()))
         self.ui.combo_olap_filter_gender.addItems(["Все", "Только женщины (0)", "Только мужчины (1)"])
 
+        # Ставим кнопки OLAP строго в строки 1 и 2 (или 2 и 3) с одинаковой высотой
+        self.ui.gridLayout.removeWidget(self.ui.btn_olap_build)
+        self.ui.gridLayout.removeWidget(self.ui.btn_olap_random)    
+        self.ui.gridLayout.addWidget(self.ui.btn_olap_build, 1, 2, 1, 1)
+        self.ui.gridLayout.addWidget(self.ui.btn_olap_random, 2, 2, 1, 1)
+
+
+        self.ui.btn_olap_build.setFixedHeight(48)
+        self.ui.btn_olap_random.setFixedHeight(48)
+
+
         # 3. Вкладка "Результаты"
         self.ui.combo_plot_type.addItems([
             "Сравнение метрик моделей (Bar chart)",
@@ -94,6 +105,121 @@ class MainWindow(QMainWindow):
         self._update_selected_model_metrics()
         self._populate_metrics_table()
         self._refresh_history()
+
+
+        self.ui.table_widget.setDocumentMode(True)
+        self.ui.table_widget.tabBar().setExpanding(True)
+        # Переопределяем стиль вкладок, убирая жесткую ширину min-width
+        self.ui.table_widget.tabBar().setStyleSheet("""
+            QTabBar::tab {
+                background: #e0e0e0;
+                color: #333333;
+                height: 48px;
+                font-size: 17px;
+                font-weight: bold;
+                border: none;
+                border-top-left-radius: 8px;
+                border-top-right-radius: 8px;
+                margin-right: 4px;
+            }
+            QTabBar::tab:last { margin-right: 0px; }
+            QTabBar::tab:selected { background-color: #2b5b84; color: white; }
+            QTabBar::tab:hover:!selected { background-color: #d0d8e0; }
+        """)
+
+
+        app_font = self.font().family()
+        self.ui.text_about.setOpenLinks(True)  # Разрешаем переходы по внутренним якорям
+        self.ui.text_about.setStyleSheet(f"""
+            QTextBrowser {{
+                background-color: transparent;
+                color: white;
+                font-family: "{app_font}";
+                font-size: 16px;
+                border: none;
+                padding: 10px;
+            }}
+        """)
+        self.ui.text_about.setHtml(f"""
+        <style>
+            body {{ font-family: '{app_font}', sans-serif; color: white; font-size: 16px; line-height: 1.5; }}
+            h2 {{ color: #ffffff; font-size: 21px; margin-bottom: 6px; }}
+            h3 {{ color: #a8d5ff; font-size: 18px; margin-top: 18px; margin-bottom: 6px; }}
+            .nav {{ padding: 12px 16px; border-radius: 8px; margin: 12px 0; }}
+            .nav a {{ color: #7ec8ff; text-decoration: none; font-weight: bold; margin-right: 16px; }}
+            .card {{ padding: 12px 16px; border-radius: 8px; margin-bottom: 12px; }}
+            b {{ color: #ffffff; }}
+            
+        </style>
+
+        <h2>Система анализа и прогнозирования отклика на рекламу</h2>
+        <p>Программный комплекс для многомерного анализа поведения аудитории (<b>OLAP</b>) и прогнозирования 
+        вероятности клика по рекламному баннеру (<code>Clicked on Ad</code>) методами машинного обучения.</p>
+
+        <div class="nav">
+            <b>Быстрый переход по разделам:</b><br>
+            <a href="#tab1">1. Данные</a>
+            <a href="#tab2">2. OLAP-куб</a>
+            <a href="#tab3">3. Предсказания</a>
+            <a href="#tab4">4. Результаты</a>
+            <a href="#tab5">5. История (БД)</a>
+            <a href="#arch">6. Архитектура</a>
+        </div>
+
+        <div class="card">
+            <h3 id="tab1">1. Вкладка «Данные»</h3>
+            <ul>
+                <li><b>Загрузить CSV</b> — открытие диалога выбора файла и загрузка датасета (по умолчанию <code>advertising.csv</code>).</li>
+                <li><b>Предобработать</b> — очистка от неинформативных столбцов (<code>Ad Topic Line</code>, <code>City</code>), извлечение из <code>Timestamp</code> месяца, дня недели и часа, создание возрастных групп (<code>Age_Group</code>).</li>
+                <li><b>Прогноз для всех</b> — пакетный расчёт вероятности клика сразу для всей таблицы с помощью модели, выбранной на вкладке «Предсказания».</li>
+                <li><b>Сохранить в CSV</b> — экспорт обработанной таблицы вместе с прогнозами в новый файл.</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h3 id="tab2">2. Вкладка «OLAP»</h3>
+            <ul>
+                <li><b>Строки куба / Столбцы куба</b> — выбор осей многомерного куба (<b>Месяц, День недели, Час, Пол, Возрастная группа, Страна</b>).</li>
+                <li><b>Мера и Агрегация</b> — выбор анализируемого показателя и функции расчёта (<b>mean, count, sum, max, min</b>).</li>
+                <li><b>Фильтр пола и Построить куб</b> — срез данных по полу и формирование сводной матрицы.</li>
+                <li><b>Случайный срез</b> — автоматический подбор случайной комбинации измерений для быстрого поиска закономерностей.</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h3 id="tab3">3. Вкладка «Предсказания»</h3>
+            <ul>
+                <li><b>Модель</b> — выбор ML-алгоритма (<b>Логистическая регрессия LR, Дерево решений DT, Нейросеть MLP</b>) с отображением метрик <code>Accuracy</code> и <code>F1</code>.</li>
+                <li><b>Параметры пользователя (8 полей)</b> — задание профиля: <b>Время на сайте, Возраст, Доход региона, Трафик в день, Пол, Месяц, День недели, Час</b>.</li>
+                <li><b>Рассчитать вероятность клика</b> — прогноз в фоновом потоке с автоматическим сохранением в <code>history.db</code>.</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h3 id="tab4">4. Вкладка «Результаты»</h3>
+            <ul>
+                <li><b>Сводная таблица (слева)</b> — сравнение моделей по метрикам <b>Accuracy, Precision, Recall, F1-score, ROC-AUC</b>.</li>
+                <li><b>Графики и Обновить результаты</b> — переключение между сравнением моделей, матрицами ошибок и тепловой картой текущего OLAP-куба.</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h3 id="tab5">5. Вкладка «История»</h3>
+            <ul>
+                <li><b>Фильтр источника (Все / Desktop / Telegram)</b> — отбор прогнозов по месту создания.</li>
+                <li><b>Очистить историю</b> — удаление всех записей из локальной базы <code>history.db</code>.</li>
+                <li><b>Обновить текущие изменения / Обновить из бота в ТГ</b> — обновление журнала из десктоп-приложения или синхронизация запросов от Telegram-бота.</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h3 id="arch">6. Архитектура и стек технологий</h3>
+            <p>Многослойная архитектура (Layered Architecture): GUI на <b>PySide6</b>, Telegram-бот на <b>aiogram 3</b>, 
+            аналитика и ML на <b>pandas, NumPy, scikit-learn, Matplotlib</b>, хранение данных в <b>SQLite3</b>.</p>
+        </div>
+        """)
+
+
 
     def _init_plot_canvas(self):
         layout = QVBoxLayout(self.ui.widget_plot)
@@ -116,7 +242,9 @@ class MainWindow(QMainWindow):
 
         self.ui.btn_draw_plot.clicked.connect(self.on_draw_plot)
 
-        self.ui.btn_refresh_history.clicked.connect(self._refresh_history)
+        self.ui.btn_refresh_local.clicked.connect(self.on_refresh_local)
+        self.ui.btn_refresh_tg.clicked.connect(self.on_refresh_from_tg)
+
         self.ui.combo_history_source.currentIndexChanged.connect(self._refresh_history)
         self.ui.btn_clear_history.clicked.connect(self.on_clear_history)
 
@@ -124,13 +252,13 @@ class MainWindow(QMainWindow):
         if DATA_PATH.exists():
             self.df = self.data_service.load_csv(str(DATA_PATH))
             self.ui.lbl_data_status.setText(
-                f"✅ Автозагрузка: advertising.csv ({self.df.shape[0]} строк, {self.df.shape[1]} столбцов)"
+                f"Автозагрузка: advertising.csv ({self.df.shape[0]} строк, {self.df.shape[1]} столбцов)"
             )
             self._fill_table(self.ui.table_data, self.df.head(100))
             self.on_build_olap()
             self.on_draw_plot()
         else:
-            self.ui.lbl_data_status.setText("⚠️ Загрузите файл advertising.csv")
+            self.ui.lbl_data_status.setText("Загрузите файл advertising.csv")
 
     def _fill_table(self, table_widget, df: pd.DataFrame):
         table_widget.clear()
@@ -145,7 +273,13 @@ class MainWindow(QMainWindow):
                 item.setTextAlignment(Qt.AlignCenter)
                 table_widget.setItem(r, c, item)
 
-        table_widget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
+        header = table_widget.horizontalHeader()
+        if df.shape[1] <= 8:
+            # Если столбцов немного (OLAP, Метрики, История) — тянем на всю ширину
+            header.setSectionResizeMode(QHeaderView.Stretch)
+        else:
+            # Если столбцов много (исходный CSV) — подгоняем по содержимому со скроллом
+            header.setSectionResizeMode(QHeaderView.ResizeToContents)
 
     @Slot()
     def on_load_csv(self):
@@ -183,7 +317,7 @@ class MainWindow(QMainWindow):
 
         pipe = self.pred_service.predictor.models[model_key]["model"]
         self.ui.btn_batch_predict.setEnabled(False)
-        self.ui.lbl_data_status.setText("⏳ Выполняется пакетный прогноз...")
+        self.ui.lbl_data_status.setText("Выполняется прогноз...")
 
         self.worker = BatchPredictWorker(self.data_service, self.df, pipe)
         self.worker.finished_ok.connect(self._on_batch_done)
@@ -195,12 +329,12 @@ class MainWindow(QMainWindow):
         self.df = res_df
         self._fill_table(self.ui.table_data, self.df.head(100))
         clicks = int(self.df["Predicted_Click"].sum())
-        self.ui.lbl_data_status.setText(f"✅ Прогноз готов! Ожидается кликов: {clicks} из {len(self.df)}")
+        self.ui.lbl_data_status.setText(f"Прогноз готов! Ожидается кликов: {clicks} из {len(self.df)}")
         self.ui.btn_batch_predict.setEnabled(True)
 
     @Slot(str)
     def _on_batch_error(self, err):
-        self.ui.lbl_data_status.setText(f"❌ Ошибка: {err}")
+        self.ui.lbl_data_status.setText(f"Ошибка: {err}")
         self.ui.btn_batch_predict.setEnabled(True)
 
     @Slot()
@@ -266,7 +400,7 @@ class MainWindow(QMainWindow):
         model_key = self.model_keys[self.ui.combo_model.currentIndex()]
 
         self.ui.btn_predict.setEnabled(False)
-        self.ui.lbl_predict_result.setText("⏳ Вычисление вероятности...")
+        self.ui.lbl_predict_result.setText("Вычисление вероятности...")
 
         self.worker = PredictWorker(self.pred_service, user_data, model_key)
         self.worker.finished_ok.connect(self._on_predict_success)
@@ -288,7 +422,7 @@ class MainWindow(QMainWindow):
 
     @Slot(str)
     def _on_predict_error(self, err: str):
-        self.ui.lbl_predict_result.setText(f"❌ Ошибка: {err}")
+        self.ui.lbl_predict_result.setText(f"Ошибка: {err}")
         self.ui.btn_predict.setEnabled(True)
 
     def _populate_metrics_table(self):
@@ -371,9 +505,41 @@ class MainWindow(QMainWindow):
         self.pred_service.db.clear_records()
         self._refresh_history()
 
+    @Slot()
+    def on_clear_history(self):
+        self.pred_service.db.clear_records()
+        self._refresh_history()
+
+    @Slot()
+    def on_refresh_local(self):
+        self.ui.combo_history_source.setCurrentText("Desktop")
+        self._refresh_history()
+
+    @Slot()
+    def on_refresh_from_tg(self):
+        self.ui.combo_history_source.setCurrentText("Telegram")
+        self._refresh_history()
+        tg_count = len(self.pred_service.db.get_records("Telegram"))
+        QMessageBox.information(
+            self,
+            "Синхронизация с Telegram",
+            f"Данные из общей БД SQLite3 обновлены.\nЗаписей от Telegram-бота: {tg_count}"
+        )
+
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = MainWindow()
     window.show()
     sys.exit(app.exec())
+
+
+    # Выравниваем кнопки вкладки OLAP симметрично (каждая занимает по 2 строки сетки)
+self.ui.gridLayout.removeWidget(self.ui.btn_olap_build)
+self.ui.gridLayout.removeWidget(self.ui.btn_olap_random)
+self.ui.gridLayout.addWidget(self.ui.btn_olap_build, 1, 2, 2, 1)
+self.ui.gridLayout.addWidget(self.ui.btn_olap_random, 3, 2, 2, 1)
+self.ui.btn_olap_build.setMinimumHeight(48)
+self.ui.btn_olap_random.setMinimumHeight(48)
+

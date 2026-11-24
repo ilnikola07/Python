@@ -86,6 +86,32 @@ async def cmd_start(message: Message, state: FSMContext):
     )
 
 
+def cancel_menu() -> ReplyKeyboardMarkup:
+    return ReplyKeyboardMarkup(
+        keyboard=[[KeyboardButton(text="В главное меню")]],
+        resize_keyboard=True,
+    )
+
+
+@router.message(F.text.in_({"В главное меню", "/back", "/cancel", "Отмена"}))
+async def cmd_cancel_text(message: Message, state: FSMContext):
+    await state.clear()
+    await message.answer("Вы вернулись в главное меню:", reply_markup=main_menu())
+
+
+
+
+
+@router.message(F.text.in_({"В главное меню", "/back"}))
+async def cmd_back_to_menu(message: Message, state: FSMContext):
+    await state.clear()
+    await message.answer(
+        "Вы вернулись в главное меню:",
+        reply_markup=main_menu(),
+    )
+
+
+
 @router.message(Command("metrics"))
 @router.message(F.text == "Метрики моделей")
 async def show_metrics(message: Message):
@@ -107,10 +133,18 @@ async def show_metrics(message: Message):
 
 @router.message(Command("olap"))
 @router.message(F.text == "Построить OLAP-куб")
+@router.message(Command("olap"))
+@router.message(F.text == "Построить OLAP-куб")
 async def start_olap(message: Message, state: FSMContext):
     if df_dataset is None:
         await message.answer("Файл advertising.csv не найден.")
         return
+
+    await state.clear()
+    await message.answer(
+        "Построение OLAP-куба",
+        reply_markup=cancel_menu(),
+    )
 
     dims = list(DIMENSIONS.keys())
     kb = InlineKeyboardMarkup(
@@ -291,6 +325,12 @@ async def show_history(message: Message):
 @router.message(Command("predict"))
 @router.message(F.text == "Предсказать клик")
 async def start_predict(message: Message, state: FSMContext):
+    await state.clear()
+    await message.answer(
+        "РПрогнозирование клика",
+        reply_markup=cancel_menu(),
+    )
+
     kb = InlineKeyboardMarkup(
         inline_keyboard=[
             [InlineKeyboardButton(text="Логистическая регрессия (LR)", callback_data="model:lr")],
@@ -300,6 +340,38 @@ async def start_predict(message: Message, state: FSMContext):
     )
     await state.set_state(PredictForm.model)
     await message.answer("1/9. Выберите модель машинного обучения:", reply_markup=kb)
+
+
+def cancel_menu() -> ReplyKeyboardMarkup:
+    return ReplyKeyboardMarkup(
+        keyboard=[[KeyboardButton(text="В главное меню")]],
+        resize_keyboard=True,
+    )
+
+
+def cancel_inline_row() -> list[InlineKeyboardButton]:
+    return [InlineKeyboardButton(text="В главное меню", callback_data="cancel_to_menu")]
+
+
+@router.message(F.text.in_({"В главное меню", "/cancel", "Отмена"}))
+async def cmd_cancel_text(message: Message, state: FSMContext):
+    await state.clear()
+    await message.answer("Вы вернулись в главное меню:", reply_markup=main_menu())
+
+
+@router.callback_query(F.data == "cancel_to_menu")
+async def cmd_cancel_callback(callback: CallbackQuery, state: FSMContext):
+    await state.clear()
+    await callback.message.answer("Вы вернулись в главное меню:", reply_markup=main_menu())
+    await callback.answer()
+
+
+def back_menu() -> ReplyKeyboardMarkup:
+    return ReplyKeyboardMarkup(
+        keyboard=[[KeyboardButton(text="В главное меню")]],
+        resize_keyboard=True,
+    )
+
 
 
 @router.callback_query(PredictForm.model, F.data.startswith("model:"))
@@ -350,7 +422,7 @@ async def process_age(message: Message, state: FSMContext):
 async def process_income(message: Message, state: FSMContext):
     try:
         val = float(message.text.replace(",", "."))
-        if not 0.0 <= val <= 250000.0:
+        if not 0.0 <= val <= 100000.0:
             raise ValueError
         await state.update_data(income=val)
         await state.set_state(PredictForm.internet)

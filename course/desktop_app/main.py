@@ -9,7 +9,8 @@ import pandas as pd
 import numpy as np
 from PySide6.QtWidgets import (
     QApplication, QMainWindow, QFileDialog, QMessageBox,
-    QTableWidgetItem, QHeaderView, QVBoxLayout
+    QTableWidgetItem, QHeaderView, QVBoxLayout, QPushButton
+
 )
 from PySide6.QtCore import Qt, Slot
 
@@ -69,6 +70,9 @@ class MainWindow(QMainWindow):
         self.ui.spin_dow.setValue(6)
         self.ui.spin_hour.setRange(0, 23)
         self.ui.spin_hour.setValue(10)
+        self.ui.lbl_model_metrics.setFixedHeight(48)
+
+
 
         # 2. Вкладка "OLAP"
         self.ui.combo_olap_rows.addItems(list(DIMENSIONS.keys()))
@@ -220,6 +224,13 @@ class MainWindow(QMainWindow):
         """)
 
 
+        # Добавляем кнопку переобучения на вкладку "Данные"
+        self.btn_retrain = QPushButton("Переобучить модели")
+        self.ui.horizontalLayout.addWidget(self.btn_retrain)
+        self.btn_retrain.clicked.connect(self.on_retrain_models)
+
+
+
 
     def _init_plot_canvas(self):
         layout = QVBoxLayout(self.ui.widget_plot)
@@ -282,13 +293,40 @@ class MainWindow(QMainWindow):
             header.setSectionResizeMode(QHeaderView.ResizeToContents)
 
     @Slot()
+    def on_retrain_models(self):
+        if self.df is None:
+            QMessageBox.warning(self, "Нет данных", "Сначала загрузите CSV-файл.")
+            return
+
+        try:
+            self.ui.lbl_data_status.setText("Идёт переобучение моделей (LR, DT, MLP)...")
+            QApplication.processEvents()
+
+            from ml.trainer import train_models
+            processed_df = self.data_service.preprocess(self.df)
+            train_models(processed_df)
+
+            # Перезагружаем обновлённые модели и метрики в интерфейс
+            self.pred_service = PredictionService()
+            self._update_selected_model_metrics()
+            self._populate_metrics_table()
+            self.on_draw_plot()
+
+            self.ui.lbl_data_status.setText("Модели успешно переобучены на текущих данных!")
+            QMessageBox.information(self, "Готово", "Все модели (LR, DT, MLP) переобучены, метрики обновлены.")
+        except Exception as e:
+            self.ui.lbl_data_status.setText("Ошибка при переобучении моделей.")
+            QMessageBox.critical(self, "Ошибка обучения", str(e))
+
+
+    @Slot()
     def on_load_csv(self):
         path, _ = QFileDialog.getOpenFileName(self, "Открыть CSV", str(ROOT_DIR), "CSV Files (*.csv)")
         if not path:
             return
         try:
             self.df = self.data_service.load_csv(path)
-            self.ui.lbl_data_status.setText(f"✅ Загружен файл: {Path(path).name} ({self.df.shape[0]} строк)")
+            self.ui.lbl_data_status.setText(f"Загружен файл: {Path(path).name} ({self.df.shape[0]} строк)")
             self._fill_table(self.ui.table_data, self.df.head(100))
         except Exception as e:
             QMessageBox.critical(self, "Ошибка загрузки", str(e))
@@ -300,7 +338,7 @@ class MainWindow(QMainWindow):
             return
         try:
             self.df = self.data_service.preprocess(self.df)
-            self.ui.lbl_data_status.setText(f"✅ Предобработка завершена ({self.df.shape[1]} признаков)")
+            self.ui.lbl_data_status.setText(f"Предобработка завершена ({self.df.shape[1]} признаков)")
             self._fill_table(self.ui.table_data, self.df.head(100))
         except Exception as e:
             QMessageBox.critical(self, "Ошибка предобработки", str(e))
@@ -534,12 +572,4 @@ if __name__ == "__main__":
     window.show()
     sys.exit(app.exec())
 
-
-    # Выравниваем кнопки вкладки OLAP симметрично (каждая занимает по 2 строки сетки)
-self.ui.gridLayout.removeWidget(self.ui.btn_olap_build)
-self.ui.gridLayout.removeWidget(self.ui.btn_olap_random)
-self.ui.gridLayout.addWidget(self.ui.btn_olap_build, 1, 2, 2, 1)
-self.ui.gridLayout.addWidget(self.ui.btn_olap_random, 3, 2, 2, 1)
-self.ui.btn_olap_build.setMinimumHeight(48)
-self.ui.btn_olap_random.setMinimumHeight(48)
 

@@ -22,3 +22,10 @@ MODEL_FILES = {
     "mlp": ("Нейросеть (MLP)", MODELS_DIR / "mlp_pipeline.joblib"),
 }
 METRICS_FILE = MODELS_DIR / "metrics_summary.joblib"
+
+import os
+from dotenv import load_dotenv
+
+load_dotenv(BASE_DIR / ".env")
+BOT_TOKEN = os.getenv("BOT_TOKEN", "")
+
